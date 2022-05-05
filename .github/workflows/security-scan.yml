@@ -106,6 +106,6 @@ jobs:
         token: ${{ secrets.ACCESS_TOKEN }}
         ref: refs/heads/main
         action: break
-        argvs: '--enable-secret-scanning --enable-dependabot'
+        #argvs: '--disable-secret-scanning --disable-dependabot'
         
         
