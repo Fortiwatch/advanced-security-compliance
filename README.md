@@ -1,2 +1,2 @@
-# advanced-security-compliance
+# Advanced Security Compliance
 Github Advanced Security Compliance Action
