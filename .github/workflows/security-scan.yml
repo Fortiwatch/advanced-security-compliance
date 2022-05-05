@@ -61,7 +61,13 @@ jobs:
   # CodeQL
   codeql:
     runs-on: ubuntu-latest
+    permissions:
+      # required for all workflows
+      security-events: write
 
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -92,5 +98,14 @@ jobs:
     - name: Advance Security Compliance Action
       uses: GeekMasher/advanced-security-compliance@main
       with:
+        severity: error
+        repository: GeekMasher/advanced-security-compliance
         policy: GeekMasher/security-queries
         policy-path: policies/default.yml
+        policy-branch: main
+        token: ${{ secrets.ACCESS_TOKEN }}
+        ref: refs/heads/main
+        action: break
+        argvs: '--enable-secret-scanning --enable-dependabot'
+        
+        
