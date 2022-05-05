@@ -9,12 +9,14 @@ on:
                        severities are included so selecting 'error' also selects 'critical' and 
                        'high' along with 'error'.
         default: error
+        type: string
       repository:
         description: |
                        Repository owner/name.
                        This can be setup using a separate repository to the one being analysed 
                        for security compliance
         default: ${{ github.repository }}
+        type: string
       token:
         description: |
                        GitHub Personal Access Token to access the GitHub API.
@@ -22,32 +24,39 @@ on:
                        exposed to Actions so this might need to be set using a token that has 
                        the ability to access the resources
         default: ${{ github.token }}
+        type: string
       ref:
         description: GitHub Ref
         default: ${{ github.ref }}
+        type: string
       action:
         description: |
                        [optional] What course of action to take upon discovering security issues that pass
                        threshold?
         default: break
+        type: string
       policy:
         description: |
                        The owner/repo of where the policy is stored
                        This generally is primarily used for a single repository that defines 
                        your organizations security policy
+        type: string
       policy-path:
         description: |
                        Policy as Code file path (including path in repo)
                        The path where the policy lives. This might be in either the current 
                        repository or in a remote repository.
+        type: string
       policy-branch:
         description: |
                        Policy as Code branch
                        The branch you want to target using `policy` argument
         default: main
+        type: string
       argvs:
         description: |
                        [optional] Additional Arguments
+        type: string
 jobs:
   # CodeQL
   codeql:
