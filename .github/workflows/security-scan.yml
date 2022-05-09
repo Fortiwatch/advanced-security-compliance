@@ -3,6 +3,12 @@ name: Resuable Security Scan Workflow
 on:
   workflow_call:
     inputs:
+      language:
+        description: |
+                       List to define the languages in your repo that are analyzed.
+        required: true
+        type: string
+      
       severity:
         description: |
                        Set the severity levels which to set the threshold. All previous 
@@ -10,6 +16,7 @@ on:
                        'high' along with 'error'.
         default: error
         type: string
+      
       repository:
         description: |
                        Repository owner/name.
@@ -17,6 +24,7 @@ on:
                        for security compliance
         default: ${{ github.repository }}
         type: string
+      
       token:
         description: |
                        GitHub Personal Access Token to access the GitHub API.
@@ -25,34 +33,40 @@ on:
                        the ability to access the resources
         default: ${{ github.token }}
         type: string
+      
       ref:
         description: GitHub Ref
         default: ${{ github.ref }}
         type: string
+      
       action:
         description: |
                        [optional] What course of action to take upon discovering security issues that pass
                        threshold?
         default: break
         type: string
+      
       policy:
         description: |
                        The owner/repo of where the policy is stored
                        This generally is primarily used for a single repository that defines 
                        your organizations security policy
         type: string
+      
       policy-path:
         description: |
                        Policy as Code file path (including path in repo)
                        The path where the policy lives. This might be in either the current 
                        repository or in a remote repository.
         type: string
+      
       policy-branch:
         description: |
                        Policy as Code branch
                        The branch you want to target using `policy` argument
         default: main
         type: string
+      
       argvs:
         description: |
                        [optional] Additional Arguments
@@ -71,7 +85,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-         language: [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+         include:
+           - language: ${{ inputs.language }}
          # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
          # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
     
