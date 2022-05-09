@@ -6,6 +6,7 @@ on:
       language:
         description: |
                        List to define the languages in your repo that are analyzed.
+        default: ${{ toJson(language) }}
         required: true
         type: string
       
