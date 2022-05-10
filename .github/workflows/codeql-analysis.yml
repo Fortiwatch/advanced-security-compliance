@@ -1,1 +1,97 @@
+name: Resuable CodQL Security Scan Workflow
 
+on:
+  
+  workflow_call:
+    
+    inputs:
+      
+      runs-on:
+        description: |
+                       CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
+        default: ubuntu-latest
+        type: string
+      
+      languages:
+        description: |
+                       To define the languages in your repo that are analyzed.
+                       CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+                       Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+        type: string
+      
+      config-file:
+        description: |
+                       If you wish to specify custom queries, you can do so here in a config file.
+                       Use the path to this config file in your scan.
+        type: string
+      
+      queries:
+        description: |
+                       By default, queries listed here will override any specified in a config file.
+                       Prefix the list here with "+" to use these queries and those in the config file.
+                       Details on CodeQL's query packs refer to : 
+                       https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+        type: string
+      
+      auto-build:
+        description: |
+                       Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+                       If this step fails, then you should use set this as false and run the build manually 
+                       using custom-build script/file.
+        default: true
+        type: boolean
+      
+      custom-build:
+        description: |
+                       ℹ️ Command-line programs to run using the OS shell.
+                       📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+                       If the Autobuild fails above, set it to false. 
+                       Build your code if your project, please refer to the EXAMPLE below for guidance.
+    # - run: |
+    #   echo "Run, Build Application using script"
+    #   ./location_of_script_within_repo/buildscript.sh
+        type: string
+            
+jobs:
+  # CodeQL
+  codeql:
+    name: CodeQL Analyze
+    # CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
+    runs-on: ${{ inputs.runs-on }}
+    
+    permissions:
+      # required for all workflows
+      security-events: write
+      
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ inputs.languages }} 
+        config-file: ${{ inputs.config-file }} 
+        queries: ${{ inputs.config-file }}
+    
+    # Build any compiled languages detected
+    # AutoBuild
+    - name: AutoBuild
+      if: ${{ inputs.auto-build == true }}
+      uses: github/codeql-action/autobuild@v2
+    
+    # If AutoBuild fails, use your own script to build
+    - name: CustomBuild
+      if: ${{ inputs.auto-build == false }}
+      run: |
+             echo "Run, Build Application using script"
+             ${{ inputs.custom-build }}
+    
+    # Analyze your code for vulnerabilities
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
