@@ -135,11 +135,11 @@ jobs:
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: AutoBuild
-      if: ${{ inputs.auto-build == 'true' }}
+      if: ${{ inputs.auto-build == true }}
       uses: github/codeql-action/autobuild@v2
       
     - name: CustomBuild
-      if: ${{ inputs.auto-build == 'false' }}
+      if: ${{ inputs.auto-build == false }}
       run: |
              echo "Run, Build Application using script"
              ${{ inputs.custom-build }}
