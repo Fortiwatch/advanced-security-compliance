@@ -1,19 +1,35 @@
-name: Resuable Security Scan Workflow
+name: Resuable CodQL Security Scan Workflow
 
 on:
   workflow_call:
     inputs:
+      
+      runs-on:
+        description: |
+                       CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
+        default: ubuntu-latest
+        type: string
+      
       language:
         description: |
                        To define the languages in your repo that are analyzed.
         #default: ${{ toJson(language) }}
         #required: true
         type: string
+      
       config-file:
         description: |
                        If you wish to specify custom queries, you can do so here or in a config file.
                        By default, queries listed here will override any specified in a config file.
                        Prefix the list here with "+" to use these queries and those in the config file.
+        type: string
+      
+      queries:
+        description: |
+                       By default, queries listed here will override any specified in a config file.
+                       Prefix the list here with "+" to use these queries and those in the config file.
+                       Details on CodeQL's query packs refer to : 
+                       https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         type: string
       
       auto-build:
@@ -98,7 +114,7 @@ jobs:
   codeql:
     name: CodeQL Analyze
     # CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     
     permissions:
       # required for all workflows
@@ -127,7 +143,7 @@ jobs:
         languages: ${{ inputs.language }} # comment this if using matrix & uncomment the below line
         #languages: ${{ matrix.language }} if using matrix
         config-file: ${{ inputs.config-file }} # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
+        queries: ${{ inputs.config-file }} # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
         # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         # queries: security-extended,security-and-quality
