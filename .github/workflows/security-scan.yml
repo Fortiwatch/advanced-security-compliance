@@ -3,12 +3,33 @@ name: Resuable Security Scan Workflow
 on:
   workflow_call:
     inputs:
-      #language:
-        #description: |
-        #               List to define the languages in your repo that are analyzed.
+      language:
+        description: |
+                       To define the languages in your repo that are analyzed.
         #default: ${{ toJson(language) }}
         #required: true
-        #type: string
+        type: string
+      config-file:
+        description: |
+                       If you wish to specify custom queries, you can do so here or in a config file.
+                       By default, queries listed here will override any specified in a config file.
+                       Prefix the list here with "+" to use these queries and those in the config file.
+        type: string
+      
+      auto-build:
+        description: |
+                       Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+                       If this step fails, then you should remove it and run the build manually 
+                       using custom-build yml file.
+        default: true
+        type: boolean
+      
+      custom-build:
+        description: |
+                       Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+                       If this step fails, then you should remove it and run the build manually 
+                       using custom-build file. This can also be a path to the executable file.
+        type: string
       
       severity:
         description: |
@@ -76,15 +97,19 @@ jobs:
   # CodeQL
   codeql:
     name: CodeQL Analyze
+    # CodeQL runs on ubuntu-latest, windows-latest, and macos-latest
     runs-on: ubuntu-latest
+    
     permissions:
       # required for all workflows
       security-events: write
+      
       # only required for workflows in private repositories
       actions: read
       contents: read
-    strategy:
-      fail-fast: false
+    
+    #strategy:
+      #fail-fast: false
       #matrix:
          #include:
            #- language: ${{ inputs.language }}
@@ -98,20 +123,27 @@ jobs:
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
-      #with:
-        #languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
+      with:
+        languages: ${{ inputs.language }} # comment this if using matrix & uncomment the below line
+        #languages: ${{ matrix.language }} if using matrix
+        config-file: ${{ inputs.config-file }} # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
-        
         # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         # queries: security-extended,security-and-quality
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
+    - name: AutoBuild
+      if: ${{ inputs.auto-build == 'true' }}
       uses: github/codeql-action/autobuild@v2
-    
+      
+    - name: CustomBuild
+      if: ${{ inputs.auto-build == 'false' }}
+      run: |
+             echo "Run, Build Application using script"
+             ${{ inputs.custom-build }}
+      
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
 
@@ -121,6 +153,7 @@ jobs:
     # - run: |
     #   echo "Run, Build Application using script"
     #   ./location_of_script_within_repo/buildscript.sh
+    
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
   
