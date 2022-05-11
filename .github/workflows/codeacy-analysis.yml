@@ -9,22 +9,27 @@ on:
       directory:
         required: false
         description: "The directory to be analyzed"
+        type: string
       
       parallel:
         required: false
         description: "Number of tools to run in parallel"
+        type: number
   
       tool:
         required: false
         description: "The name of the tool to analyze the code"
+        type: string
   
       tool-timeout:
         required: false
         description: "Maximum time each tool has to execute"
+        type: string
       
       fail-if-incomplete:
         required: false
         description: "Fail the analysis if any tool fails to run"
+        type: string
       
       
 jobs:
