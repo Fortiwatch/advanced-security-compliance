@@ -2,34 +2,7 @@ name: Resuable Codacy Security Scan Workflow
 
 on:
   
-  workflow_call:
-    
-    inputs:
-      
-      directory:
-        required: false
-        description: "The directory to be analyzed"
-        type: string
-      
-      parallel:
-        required: false
-        description: "Number of tools to run in parallel"
-        type: number
-  
-      tool:
-        required: false
-        description: "The name of the tool to analyze the code"
-        type: string
-  
-      tool-timeout:
-        required: false
-        description: "Maximum time each tool has to execute"
-        type: string
-      
-      fail-if-incomplete:
-        required: false
-        description: "Fail the analysis if any tool fails to run"
-        type: string
+  workflow_call
       
       
 jobs:
@@ -55,14 +28,6 @@ jobs:
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@master
         with:
-          directory: ${{ inputs.directory }}
-          parallel: ${{ inputs.parallel }}
-          tool: ${{ inputs.tool }}
-          tool-timeout: ${{ inputs.tool-timeout }}
-          fail-if-incomplete: ${{ inputs.fail-if-incomplete }}
-          # Check https://github.com/codacy/codacy-analysis-cli#project-token to get your project token from your Codacy repository
-          # You can also omit the token and run the tools that support default configurations
-          verbose: true
           output: results.sarif
           format: sarif
           # Adjust severity of non-security issues
