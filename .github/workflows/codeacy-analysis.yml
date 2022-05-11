@@ -53,7 +53,7 @@ jobs:
     
       # Execute Codacy Analysis CLI and generate a SARIF output with the security issues identified during the analysis
       - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
+        uses: codacy/codacy-analysis-cli-action@main
         with:
           directory: ${{ inputs.directory }}
           parallel: ${{ inputs.parallel }}
